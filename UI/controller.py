@@ -16,3 +16,50 @@ class Controller:
     def handle_path(self, e):
         pass
 
+    def fillDD(self):
+        year = self._model.get_anni()
+
+        for y in year:
+            self._view.ddyear.options.append(ft.dropdown.Option(y))
+        self._view.update_page()
+
+    def fillDD2(self, e):
+        year = int(self._view.ddyear.value)
+        shapes = self._model.get_shape(year)
+
+        for s in shapes:
+            self._view.ddshape.options.append(ft.dropdown.Option(s))
+        self._view.update_page()
+
+
+    def handle_graph(self, e):
+        a = self._view.ddyear.value
+        s = self._view.ddshape.value
+
+        if a is None:
+            self._view.create_alert("Inserire l'anno")
+            return
+
+        if s is None:
+            self._view.create_alert("Inserire la shape")
+            return
+
+        self._view.txt_result1.controls.clear()
+        self._model.buildGraph(a, s)
+
+        self._view.txt_result1.controls.append(ft.Text(
+            f"Numero di nodi: {self._model.get_num_of_nodes()} Numero di archi: {self._model.get_num_of_edges()}"))
+
+        self._view.txt_result1.controls.append(
+            ft.Text(f"Il grafo ha: {self._model.get_num_connesse()} componenti connesse"))
+        connessa = self._model.get_connessaMAX()
+        self._view.txt_result1.controls.append(ft.Text(f"La componente connessa più grande "
+                                                       f"è costituita da {len(connessa)} nodi:"))
+
+        for c in connessa:
+            self._view.txt_result1.controls.append(ft.Text(c))
+
+        self._view.btn_path.disabled = False
+        self._view.update_page()
+
+
